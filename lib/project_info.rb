@@ -16,7 +16,6 @@ def place_detail(config, id)
   HTTP.headers(
     'X-Goog-Api-Key' => config['GOOGLE_KEY'],
     'X-Goog-FieldMask' => 'id,displayName,reviews,rating'
-    # 'X-Goog-FieldMask' => '*'
     ).get(url)
 end
 
@@ -25,9 +24,12 @@ results = {}
 
 responses['NTHU'] = text_search(config, '國立清華大學')
 nthu = responses['NTHU'].parse
-results['id'] = nthu['places'][0]['id']
+nthu_id = nthu['places'][0]['id']
+results['id'] = nthu_id
 
 responses['NTHU_Detail'] = place_detail(config, nthu_id)
 nthu_detail = responses['NTHU_Detail'].parse
 results['rating'] = nthu_detail['rating']
 results['review'] = nthu_detail['reviews']
+
+File.write('spec/fixtures/google_map_results.yml', results.to_yaml)
